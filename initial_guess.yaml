@@ -1,0 +1,55 @@
+System_Name: 'OmniMag_1Amp'
+Workspace_Dimensions:
+- [-0.080, 0.080]
+- [-0.080, 0.080]
+- [-0.080, 0.080]
+Coil_List: [Coil_X, Coil_Y, Coil_Z]
+Coil_X:
+  Source_List: [Src_1]
+  Src_1:
+    A_Coeff: [0]
+    B_Coeff:
+    - [1]
+    - [0]
+    - [0]
+    Source_Position:
+    - [0]
+    - [0]
+    - [-0.2]
+    Source_Direction:
+    - [1]
+    - [0]
+    - [0]
+Coil_Y:
+  Source_List: [Src_1]
+  Src_1:
+    A_Coeff: [0]
+    B_Coeff:
+    - [1]
+    - [0]
+    - [0]
+    Source_Position:
+    - [0]
+    - [0]
+    - [-0.2]
+    Source_Direction:
+    - [0]
+    - [1]
+    - [0]
+Coil_Z:
+  Source_List: [Src_1]
+  Src_1:
+    A_Coeff: [0]
+    B_Coeff:
+    - [1]
+    - [0]
+    - [0]
+    Source_Position:
+    - [0]
+    - [0]
+    - [-0.2]
+    Source_Direction:
+    - [0]
+    - [0]
+    - [1]
+

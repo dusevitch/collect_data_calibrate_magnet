@@ -1,7 +1,12 @@
+# Qt files
 *.o
 *.[oa]
 /Timer
 Timer/
+
+Makefile
+*.qmake.stash
+comm_stream.txt
 
 # Compiled Object files
 *.slo

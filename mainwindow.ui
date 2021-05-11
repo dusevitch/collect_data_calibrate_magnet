@@ -386,19 +386,6 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="load_init_file">
-    <property name="geometry">
-     <rect>
-      <x>480</x>
-      <y>400</y>
-      <width>141</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Load Calib Init File</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="run_calib">
     <property name="geometry">
      <rect>
@@ -560,6 +547,9 @@
       <width>113</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>5</string>
     </property>
    </widget>
   </widget>

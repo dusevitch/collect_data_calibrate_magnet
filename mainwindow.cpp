@@ -5,6 +5,9 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QString>
+#include <electromagnet_calibration.h>
+#include <EigenToYAML.h>
+#include <scalorPotential.h>
 
 
 polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat);
@@ -18,13 +21,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // Matrix from the sensor frame to a right handed coordinate frame
+    // This frame is the frame aligned with the table coordinate frame
+    // when the sensor handle extends towards the drawer, and the sensor
+    // is on top.
+    sensor_to_RHS << 1, 2, 3,
+                     4, 5, 6,
+                     7, 8, 9;
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-
-
 }
 
 void MainWindow::on_activate_mag_toggled(bool checked)
@@ -32,18 +42,7 @@ void MainWindow::on_activate_mag_toggled(bool checked)
     // Activate the specific coil value set
 
     // Check if values in the coils (check if values greater than 40 amps and set error message
-    QLineEdit *coil_0_val = MainWindow::findChild<QLineEdit *>("coil_0_current");
-    QLineEdit *coil_1_val = MainWindow::findChild<QLineEdit *>("coil_1_current");
-    QLineEdit *coil_2_val = MainWindow::findChild<QLineEdit *>("coil_2_current");
-
-    QString coil0String =coil_0_val->text();
-    double coil0=coil0String.toDouble();
-
-    QString coil1String =coil_1_val->text();
-    double coil1=coil1String.toDouble();
-
-    QString coil2String =coil_2_val->text();
-    double coil2=coil2String.toDouble();
+    getCoilVals();
 
         // read the coil values and set an error message
     if (coil0>40 || coil0<0  || coil1>40 || coil1<0  || coil2>40 || coil2<0 ){
@@ -56,8 +55,21 @@ void MainWindow::on_activate_mag_toggled(bool checked)
         // Turn on the coils (using the same code that is used in Cam's gui
 
     }
+}
 
+void MainWindow::getCoilVals(){
+    QLineEdit *coil_0_val = MainWindow::findChild<QLineEdit *>("coil_0_current");
+    QLineEdit *coil_1_val = MainWindow::findChild<QLineEdit *>("coil_1_current");
+    QLineEdit *coil_2_val = MainWindow::findChild<QLineEdit *>("coil_2_current");
 
+    QString coil0String =coil_0_val->text();
+    coil0=coil0String.toDouble();
+
+    QString coil1String =coil_1_val->text();
+    coil1=coil1String.toDouble();
+
+    QString coil2String =coil_2_val->text();
+    coil2=coil2String.toDouble();
 }
 
 void MainWindow::on_start_sensor_toggled(bool checked)
@@ -72,32 +84,38 @@ void MainWindow::on_start_polaris_toggled(bool checked)
 
 void MainWindow::on_collect_data_toggled(bool checked)
 {
-    // Start the timer for 5 seconds and collect data from the wand position at that location (at 30 Hz)
+    QLineEdit *time_to_collect = MainWindow::findChild<QLineEdit *>("coil_0_current");
+    QString collect_time_string =time_to_collect->text();
+    int collect_time=collect_time_string.toInt();
 
-    for (int i=0;i<(34*5);i=i+34){
+    // Start the timer for collected seconds and collect data from the wand position at that location (at 30 Hz)
+    for (int i=0;i<(34*collect_time);i=i+34){
         QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData()));
+        connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData(omnimagnet_cal_1amp, dataList1)));
         timer->start(34);
     }
-
 }
 
-void getCalibData(, & dataList){
+void MainWindow::getCalibData(ElectromagnetCalibration &calibration, std::vector< MagneticMeasurement> &dataList){
     // collect rotation and translation of the wand with respect to the magnet
-    printVector3d(tracker_wand_pose.pos, "Current Position");
-    printMatrix3d(tracker_wand_pose.rot_mat, "Current Rot");
+    printVector3d(tracker_wand_pose->pos, "Current Position");
+    printMatrix3d(tracker_wand_pose->rot_mat, "Current Rot");
+
+    getCoilVals();
+//    Eigen::VectorXd current_vec = Eigen::VectorXd(coil0, coil1, coil2);
 
     // Get sensor data at this point (field data)
+    // Make sure this data is transformed by the coordinate frame of the sensor, the position of the sensor with respect to the tracker, and
 
 
-   // Make sure this data is transformed by the coordinate frame of the sensor, the position of the sensor with respect to the tracker, and
+//    // Save the data in a data structure, and eliminate any data outside the workspace bounds
+//    if (calibration.pointInWorkspace (tracker_wand_pose)){
+//        MagneticMeasurement cur_measurement =  MagneticMeasurement (const Eigen::Vector3d &Field, tracker_wand_pose.pos, current_vec);
+//    }
+//    // Put this data into the format for the electromagnet calibration
 
-   // Save the data in a data structure, and eliminate any data outside the workspace bounds
+//    dataList.push_back(cur_measurement);
 
-   // Put this data into the format for the electromagnet calibration
-
-
-   dataList
 }
 
 
@@ -149,11 +167,11 @@ void MainWindow::startPolaris()
 
 
 void MainWindow::updateCurrPos(){
-    // THIS SHOULD BE IN THE SENSOR CODE:
-    // Magnetic Sensor
-    QLCDNumber *mag_sense_x = MainWindow::findChild<QLCDNumber *>("mag_sense_x");
-    QLCDNumber *mag_sense_y = MainWindow::findChild<QLCDNumber *>("mag_sense_y");
-    QLCDNumber *mag_sense_z = MainWindow::findChild<QLCDNumber *>("mag_sense_z");
+//    // THIS SHOULD BE IN THE SENSOR CODE:
+//    // Magnetic Sensor
+//    QLCDNumber *mag_sense_x = MainWindow::findChild<QLCDNumber *>("mag_sense_x");
+//    QLCDNumber *mag_sense_y = MainWindow::findChild<QLCDNumber *>("mag_sense_y");
+//    QLCDNumber *mag_sense_z = MainWindow::findChild<QLCDNumber *>("mag_sense_z");
 
 
     // Polaris Tracking
@@ -244,7 +262,7 @@ polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat){
 
     //Position
     Eigen::Vector4d pos_vec = trans_mat.col(3);
-    pose_struct->pos = Vector3d(pos_vec(0), pos_vec(1), pos_vec(2));
+    pose_struct->pos = Eigen::Vector3d(pos_vec(0), pos_vec(1), pos_vec(2));
 
     // Transformation matrix and Inverse Transformation matrix
     pose_struct->trans_mat = trans_mat;
@@ -270,3 +288,4 @@ void printVector3d(Eigen::Vector3d vec, std::string name)
     std::cout <<vec(0)<<","<<vec(1) <<","<<vec(2)<<std::endl;
     std::cout << "----------------" << std::endl;
 }
+
