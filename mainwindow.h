@@ -12,6 +12,7 @@
 #include <electromagnet_calibration.h>
 #include <EigenToYAML.h>
 #include <scalorPotential.h>
+#include <Timer/Timer.h>
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    // ----------------FUNCTIONS----------------
+
     void getMagPointData();
 //    void calibrateMagnet();
 
@@ -33,10 +36,16 @@ public:
 
     void updateStaticMarkers();
 
-    void updateCurrPos();
+    bool updateCurrPos();
 
     void startPolaris();
+    void stopPolaris();
 
+    void getCoilVals();
+    void getCalibData(ElectromagnetCalibration &calibration, std::vector< MagneticMeasurement> &dataList);
+
+
+    // ----------------VARIABLES----------------
     polarisTransformMatrix *tracker_base_pose;
     polarisTransformMatrix *tracker_wand_pose;
 
@@ -67,10 +76,6 @@ public:
 
     Eigen::Matrix3d sensor_to_RHS;
 
-    void getCoilVals();
-    void getCalibData(ElectromagnetCalibration &calibration, std::vector< MagneticMeasurement> &dataList);
-
-
 private slots:
     void on_activate_mag_toggled(bool checked);
 
@@ -80,11 +85,12 @@ private slots:
 
     void on_collect_data_toggled(bool checked);
 
-    void on_load_init_file_clicked();
+
 
 private:
     Ui::MainWindow *ui;
 
+    Timer polarisTimer;
 
 
 };

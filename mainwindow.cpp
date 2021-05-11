@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     sensor_to_RHS << 1, 2, 3,
                      4, 5, 6,
                      7, 8, 9;
-
 }
 
 MainWindow::~MainWindow()
@@ -79,7 +78,11 @@ void MainWindow::on_start_sensor_toggled(bool checked)
 
 void MainWindow::on_start_polaris_toggled(bool checked)
 {
-    startPolaris();
+    if (checked){
+        startPolaris();
+    }else{
+        stopPolaris();
+    }
 }
 
 void MainWindow::on_collect_data_toggled(bool checked)
@@ -115,7 +118,6 @@ void MainWindow::getCalibData(ElectromagnetCalibration &calibration, std::vector
 //    // Put this data into the format for the electromagnet calibration
 
 //    dataList.push_back(cur_measurement);
-
 }
 
 
@@ -163,10 +165,30 @@ void MainWindow::startPolaris()
 
     // Update the position of the initial global frame
     updateStaticMarkers();
+
+
+    ui->start_polaris->setText("Stop Polaris");
+
+    if(polarisTimer.startTicking(*this, &MainWindow::updateCurrPos, 34.0)){
+        qDebug() << "Polaris Update Thread Started (~30Hz)" << endl;
+    }else{
+        qDebug() << "Polaris Update Thread Started (~30Hz)" << endl;
+    }
 }
 
+void MainWindow::stopPolaris(){
+    if(polarisTimer.stopTicking()){
+        qDebug() << "Polaris Update Thread STOPPED" << endl;
+    }else{
+        qDebug() << "Polaris Update Thread ERROR STOPPING (IT CONTINUETH)(~30Hz)" << endl;
+    }
 
-void MainWindow::updateCurrPos(){
+    if (polaris->nStopTracking() == REPLY_OKAY){
+        qDebug() << "Tracking has stopped!" << endl;}
+    else{qDebug() << "Device could not stop tracking!" << endl;}
+}
+
+bool MainWindow::updateCurrPos(){
 //    // THIS SHOULD BE IN THE SENSOR CODE:
 //    // Magnetic Sensor
 //    QLCDNumber *mag_sense_x = MainWindow::findChild<QLCDNumber *>("mag_sense_x");
@@ -185,6 +207,8 @@ void MainWindow::updateCurrPos(){
 
     getTrackerPosition(polaris);
 
+    printVector3d(tracker_wand_pose->pos, "trackerwand");
+
     tracker_wand_x->display(QString::number(tracker_wand_x_val));
     tracker_wand_y->display(QString::number(tracker_wand_y_val));
     tracker_wand_z->display(QString::number(tracker_wand_z_val));
@@ -192,6 +216,8 @@ void MainWindow::updateCurrPos(){
     tracker_base_x->display(QString::number(tracker_base_x_val));
     tracker_base_y->display(QString::number(tracker_base_y_val));
     tracker_base_z->display(QString::number(tracker_base_z_val));
+
+    return true;
 }
 
 
@@ -200,14 +226,13 @@ void MainWindow::getTrackerPosition(PolarisSpectra *polaris){
     tracker_wand_pose = getPoseData(1);
 
     tracker_wand_x_val = tracker_wand_pose->pos(0);
-    tracker_wand_x_val = tracker_wand_pose->pos(1);
-    tracker_wand_x_val = tracker_wand_pose->pos(2);
+    tracker_wand_y_val = tracker_wand_pose->pos(1);
+    tracker_wand_z_val = tracker_wand_pose->pos(2);
 }
 
 void MainWindow::updateStaticMarkers(){
     polaris->nGetTXTransforms(0);
     tracker_base_pose = getPoseData(2);
-
 }
 
 polarisTransformMatrix* MainWindow::getPoseData(int polaris_num){
