@@ -36,18 +36,18 @@ public:
 
     void startPolaris();
 
-    polarisTransformMatrix *mag_base_pose;
-    polarisTransformMatrix *sensor_wand_pose;
+    polarisTransformMatrix *tracker_base_pose;
+    polarisTransformMatrix *tracker_wand_pose;
 
     PolarisSpectra* polaris;
 
-    double mag_wand_x_val = -1000;
-    double mag_wand_y_val = -1000;
-    double mag_wand_z_val = -1000;
+    double tracker_wand_x_val = -1000;
+    double tracker_wand_y_val = -1000;
+    double tracker_wand_z_val = -1000;
 
-    double mag_base_x_val = -1000;
-    double mag_base_y_val = -1000;
-    double mag_base_z_val = -1000;
+    double tracker_base_x_val = -1000;
+    double tracker_base_y_val = -1000;
+    double tracker_base_z_val = -1000;
 
 private slots:
     void on_activate_mag_toggled(bool checked);

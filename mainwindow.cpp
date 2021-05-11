@@ -1,5 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QMessageBox>
+#include <QDebug>
+#include <QTimer>
+#include <QFileDialog>
+#include <QString>
 
 
 polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat);
@@ -24,12 +29,40 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_activate_mag_toggled(bool checked)
 {
+    // Activate the specific coil value set
+
+    // Check if values in the coils (check if values greater than 40 amps and set error message
+    QLineEdit *coil_0_val = MainWindow::findChild<QLineEdit *>("coil_0_current");
+    QLineEdit *coil_1_val = MainWindow::findChild<QLineEdit *>("coil_1_current");
+    QLineEdit *coil_2_val = MainWindow::findChild<QLineEdit *>("coil_2_current");
+
+    QString coil0String =coil_0_val->text();
+    double coil0=coil0String.toDouble();
+
+    QString coil1String =coil_1_val->text();
+    double coil1=coil1String.toDouble();
+
+    QString coil2String =coil_2_val->text();
+    double coil2=coil2String.toDouble();
+
+        // read the coil values and set an error message
+    if (coil0>40 || coil0<0  || coil1>40 || coil1<0  || coil2>40 || coil2<0 ){
+        // Error message
+        QMessageBox msgBox;
+        msgBox.setText("Invalid Values for coils. Keep between 0 amps and 40 amps");
+        msgBox.exec();
+
+    }else{
+        // Turn on the coils (using the same code that is used in Cam's gui
+
+    }
+
 
 }
 
 void MainWindow::on_start_sensor_toggled(bool checked)
 {
-
+    // activate the sensor (using the same code as in Cam's gui
 }
 
 void MainWindow::on_start_polaris_toggled(bool checked)
@@ -39,8 +72,46 @@ void MainWindow::on_start_polaris_toggled(bool checked)
 
 void MainWindow::on_collect_data_toggled(bool checked)
 {
+    // Start the timer for 5 seconds and collect data from the wand position at that location (at 30 Hz)
+
+    for (int i=0;i<(34*5);i=i+34){
+        QTimer *timer = new QTimer(this);
+        connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData()));
+        timer->start(34);
+    }
 
 }
+
+void getCalibData(, & dataList){
+    // collect rotation and translation of the wand with respect to the magnet
+    printVector3d(tracker_wand_pose.pos, "Current Position");
+    printMatrix3d(tracker_wand_pose.rot_mat, "Current Rot");
+
+    // Get sensor data at this point (field data)
+
+
+   // Make sure this data is transformed by the coordinate frame of the sensor, the position of the sensor with respect to the tracker, and
+
+   // Save the data in a data structure, and eliminate any data outside the workspace bounds
+
+   // Put this data into the format for the electromagnet calibration
+
+
+   dataList
+}
+
+
+
+//void MainWindow::on_actiontestSave_triggered()
+//{
+//    saveFile();
+//}
+
+//void MainWindow::saveFile ()
+//{
+//    QString fname = QFileDialog::getSaveFileName(nullptr, "test sav e name", ".", "Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)" );
+//    qDebug() << "name is : " << fname;
+//}
 
 
 void MainWindow::startPolaris()
@@ -86,39 +157,38 @@ void MainWindow::updateCurrPos(){
 
 
     // Polaris Tracking
-    QLCDNumber *mag_wand_x = MainWindow::findChild<QLCDNumber *>("mag_wand_x");
-    QLCDNumber *mag_wand_y = MainWindow::findChild<QLCDNumber *>("mag_wand_y");
-    QLCDNumber *mag_wand_z = MainWindow::findChild<QLCDNumber *>("mag_wand_z");
+    QLCDNumber *tracker_wand_x = MainWindow::findChild<QLCDNumber *>("tracker_wand_x");
+    QLCDNumber *tracker_wand_y = MainWindow::findChild<QLCDNumber *>("tracker_wand_y");
+    QLCDNumber *tracker_wand_z = MainWindow::findChild<QLCDNumber *>("tracker_wand_z");
 
-    QLCDNumber *mag_base_x = MainWindow::findChild<QLCDNumber *>("mag_base_x");
-    QLCDNumber *mag_base_y = MainWindow::findChild<QLCDNumber *>("mag_base_y");
-    QLCDNumber *mag_base_z = MainWindow::findChild<QLCDNumber *>("mag_base_z");
+    QLCDNumber *tracker_base_x = MainWindow::findChild<QLCDNumber *>("tracker_base_x");
+    QLCDNumber *tracker_base_y = MainWindow::findChild<QLCDNumber *>("tracker_base_y");
+    QLCDNumber *tracker_base_z = MainWindow::findChild<QLCDNumber *>("tracker_base_z");
 
     getTrackerPosition(polaris);
 
-    mag_wand_x->display(QString::number(mag_wand_x_val));
-    mag_wand_y->display(QString::number(mag_wand_x_val));
-    mag_wand_z->display(QString::number(mag_wand_x_val));
+    tracker_wand_x->display(QString::number(tracker_wand_x_val));
+    tracker_wand_y->display(QString::number(tracker_wand_y_val));
+    tracker_wand_z->display(QString::number(tracker_wand_z_val));
 
-    mag_base_x->display(QString::number(mag_base_x_val));
-    mag_base_y->display(QString::number(mag_base_y_val));
-    mag_base_z->display(QString::number(mag_base_z_val));
-
+    tracker_base_x->display(QString::number(tracker_base_x_val));
+    tracker_base_y->display(QString::number(tracker_base_y_val));
+    tracker_base_z->display(QString::number(tracker_base_z_val));
 }
 
 
 void MainWindow::getTrackerPosition(PolarisSpectra *polaris){
     polaris->nGetTXTransforms(0);
-    sensor_wand_pose = getPoseData(1);
+    tracker_wand_pose = getPoseData(1);
 
-    mag_wand_x_val = sensor_wand_pose->pos(0);
-    mag_wand_y_val = sensor_wand_pose->pos(1);
-    mag_wand_z_val = sensor_wand_pose->pos(2);
+    tracker_wand_x_val = tracker_wand_pose->pos(0);
+    tracker_wand_x_val = tracker_wand_pose->pos(1);
+    tracker_wand_x_val = tracker_wand_pose->pos(2);
 }
 
 void MainWindow::updateStaticMarkers(){
     polaris->nGetTXTransforms(0);
-    mag_base_pose = getPoseData(2);
+    tracker_base_pose = getPoseData(2);
 
 }
 
@@ -184,8 +254,6 @@ polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat){
     return pose_struct;
     delete pose_struct;
 }
-
-
 
 void printMatrix3d(Eigen::Matrix3d matrix, std::string name)
 {
