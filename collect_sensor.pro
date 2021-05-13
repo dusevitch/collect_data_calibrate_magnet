@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,26 +14,39 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    Timer/Timer.cpp
+    Timer/Timer.cpp \
+    magsensor.cpp \
+    sensorcontrol.cpp \
+    analogbutter.cpp \
+    thermocouple.cpp \
+    ../Libraries/FileHandler/FileHandler.cpp \
+    Sensoray/Sensoray.cpp \
+    electromagnet-calibration/scalorPotential.cpp \
+    electromagnet-calibration/electromagnet_calibration.cpp
 
 HEADERS  += mainwindow.h \
-    ../Libraries/electromagnet-calibration/electromagnet_calibration.h \
-    ../Libraries/electromagnet-calibration/scalorPotential.h \
-    ../Libraries/electromagnet-calibration/EigenToYAML.h \
     Timer/Timer.h \
     ../Libraries/PolarisSpectra/PolarisSpectra.h \
-    polaristransformmatrix.h
+    polaristransformmatrix.h \
+    sensorcontrol.h \
+    magsensor.h \
+    analogbutter.h \
+    thermocouple.h \
+    Sensoray826/826api.h \
+    ../Libraries/FileHandler/FileHandler.h \
+    Sensoray/Sensoray.h \
+    electromagnet-calibration/scalorPotential.h \
+    electromagnet-calibration/electromagnet_calibration.h \
+    electromagnet-calibration/EigenToYAML.h
 
 FORMS    += mainwindow.ui
 
 
-unix:!macx: LIBS += -L$$PWD/../Libraries/PolarisSpectra/ -lPolarisSpectraLinux
+unix:!macx: LIBS += -L$$PWD/../Libraries/PolarisSpectra/ -lPolarisSpectraLinux -lrt -L/home/telerobotics/src/collect_sensor/Sensoray826 -l826_64 -lm
+
 
 INCLUDEPATH += $$PWD/../Libraries/PolarisSpectra
 DEPENDPATH += $$PWD/../Libraries/PolarisSpectra
-
-INCLUDEPATH += $$PWD/../Libraries/electromagnet-calibration
-DEPENDPATH += $$PWD/../Libraries/electromagnet-calibration
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../Libraries/yaml-cpp-folder/release/ -lyaml-cpp
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../Libraries/yaml-cpp-folder/debug/ -lyaml-cpp
@@ -50,5 +63,6 @@ else:unix: PRE_TARGETDEPS += $$PWD/../Libraries/yaml-cpp-folder/libyaml-cpp.a
 
 DISTFILES += \
     PolarisSpectraSettings.ini \
-    PolarisSpectraErrors.ini
+    PolarisSpectraErrors.ini \
+    initial_guess.yaml
 

@@ -5,9 +5,7 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QString>
-#include <electromagnet_calibration.h>
-#include <EigenToYAML.h>
-#include <scalorPotential.h>
+
 
 
 polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat);
@@ -21,6 +19,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    innerCoilGain = 12.498;
+    middleCoilGain = 13.53;
+    outerCoilGain = 9.579;
+
+    ampGains.append(innerCoilGain);
+    ampGains.append(middleCoilGain);
+    ampGains.append(outerCoilGain);
+
+    shutDownTemp = 60; //Set the shutdown temp to 60 degrees
+    shutDownDiff = 5; //If the sensors disagree by 5 degrees
+    //Set Up insertion device
+    //insertionDevice = new ActsAsynch();
+
+    sensorController = new SensorControl(shutDownTemp);
 
     // Matrix from the sensor frame to a right handed coordinate frame
     // This frame is the frame aligned with the table coordinate frame
@@ -56,6 +69,24 @@ void MainWindow::on_activate_mag_toggled(bool checked)
     }
 }
 
+void MainWindow::readMagData(){
+    QVector<double> temp(3);
+
+        sensorController->magSensor->MagSenseReadSensor(temp);
+
+            //Change LCD display in the Magnetic Calibration tab (using the sensor)
+            ui->mag_sense_x->display(temp[0]);
+            ui->mag_sense_y->display(temp[1]);
+            ui->mag_sense_z->display(temp[2]);
+
+
+            // Globally accessable variables to store data in
+            mag_xField = temp[0];
+            mag_yField = temp[1];
+            mag_zField = temp[2];
+
+}
+
 void MainWindow::getCoilVals(){
     QLineEdit *coil_0_val = MainWindow::findChild<QLineEdit *>("coil_0_current");
     QLineEdit *coil_1_val = MainWindow::findChild<QLineEdit *>("coil_1_current");
@@ -85,37 +116,66 @@ void MainWindow::on_start_polaris_toggled(bool checked)
     }
 }
 
+
 void MainWindow::on_collect_data_toggled(bool checked)
 {
-    QLineEdit *time_to_collect = MainWindow::findChild<QLineEdit *>("coil_0_current");
-    QString collect_time_string =time_to_collect->text();
-    int collect_time=collect_time_string.toInt();
+    if (checked){
+        QLineEdit *time_to_collect = MainWindow::findChild<QLineEdit *>("collect_time_s");
+        QString collect_time_string =time_to_collect->text();
+        int collect_time=collect_time_string.toInt()*1000;
 
-    // Start the timer for collected seconds and collect data from the wand position at that location (at 30 Hz)
-    for (int i=0;i<(34*collect_time);i=i+34){
-        QTimer *timer = new QTimer(this);
-        connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData(omnimagnet_cal_1amp, dataList1)));
-        timer->start(34);
+        timer = new QTimer();
+
+        qDebug()<< collect_time<<endl;
+        time = collect_time;
+
+        // Start the timer for collected seconds and collect data from the wand position at that location (at 30 Hz)
+
+        connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData()));
+        timer->start(sampling_rate_ms);
+
+    }else{
+        timer->stop();
+
     }
+
 }
 
-void MainWindow::getCalibData(ElectromagnetCalibration &calibration, std::vector< MagneticMeasurement> &dataList){
+void MainWindow::getCalibData(){
+
+    time = time-sampling_rate_ms;
+
+    if (time <=0){
+        timer->stop();
+    }
+
+
+    qDebug() << "---------time = " << time << endl;
+
+    ElectromagnetCalibration calibration = omnimagnet_cal_1amp;
+    std::vector< MagneticMeasurement>dataList = dataList1;
+
+    Vector3d cur_Field = Vector3d(mag_xField,mag_yField,mag_zField );
+    printVector3d(cur_Field, "Current Field");
+
     // collect rotation and translation of the wand with respect to the magnet
     printVector3d(tracker_wand_pose->pos, "Current Position");
     printMatrix3d(tracker_wand_pose->rot_mat, "Current Rot");
 
     getCoilVals();
+
 //    Eigen::VectorXd current_vec = Eigen::VectorXd(coil0, coil1, coil2);
 
     // Get sensor data at this point (field data)
     // Make sure this data is transformed by the coordinate frame of the sensor, the position of the sensor with respect to the tracker, and
 
 
-//    // Save the data in a data structure, and eliminate any data outside the workspace bounds
-//    if (calibration.pointInWorkspace (tracker_wand_pose)){
-//        MagneticMeasurement cur_measurement =  MagneticMeasurement (const Eigen::Vector3d &Field, tracker_wand_pose.pos, current_vec);
+////    // Save the data in a data structure, and eliminate any data outside the workspace bounds
+//    MagneticMeasurement cur_measurement;
+//    if (calibration.pointInWorkspace(tracker_wand_pose->pos)){
+//        cur_measurement =  MagneticMeasurement (cur_Field, tracker_wand_pose->pos, current_vec);
 //    }
-//    // Put this data into the format for the electromagnet calibration
+////    // Put this data into the format for the electromagnet calibration
 
 //    dataList.push_back(cur_measurement);
 }
@@ -169,7 +229,7 @@ void MainWindow::startPolaris()
 
     ui->start_polaris->setText("Stop Polaris");
 
-    if(polarisTimer.startTicking(*this, &MainWindow::updateCurrPos, 34.0)){
+    if(polarisTimer.startTicking(*this, &MainWindow::updateCurrPos, sampling_rate_ms)){
         qDebug() << "Polaris Update Thread Started (~30Hz)" << endl;
     }else{
         qDebug() << "Polaris Update Thread Started (~30Hz)" << endl;
@@ -207,8 +267,6 @@ bool MainWindow::updateCurrPos(){
 
     getTrackerPosition(polaris);
 
-    printVector3d(tracker_wand_pose->pos, "trackerwand");
-
     tracker_wand_x->display(QString::number(tracker_wand_x_val));
     tracker_wand_y->display(QString::number(tracker_wand_y_val));
     tracker_wand_z->display(QString::number(tracker_wand_z_val));
@@ -218,6 +276,31 @@ bool MainWindow::updateCurrPos(){
     tracker_base_z->display(QString::number(tracker_base_z_val));
 
     return true;
+}
+
+
+void MainWindow::on_updateBase_clicked()
+{
+    updateStaticMarkers();
+}
+
+void MainWindow::on_start_sensor_clicked(bool checked)
+{
+    QTimer *mag_sense_timer = new QTimer(this);
+
+    if (checked){
+        ui->start_sensor->setText("Stop Mag Sensor");
+        sensorController->magSensor->MagSenseBegin();
+        connect(mag_sense_timer, SIGNAL(timeout()),this,SLOT(readMagData()));
+        mag_sense_timer->start(sampling_rate_ms);
+        ui->start_sensor->setStyleSheet("background-color: orange");
+    }else{
+        disconnect(counter, SIGNAL(timeout()),this,SLOT(readMagData()));
+        ui->start_sensor->setText("Start Mag Sensor");
+        sensorController->magSensor->MagSenseStop();
+        mag_sense_timer->stop();
+        ui->start_sensor->setStyleSheet("background-color: none");
+    }
 }
 
 
@@ -314,3 +397,8 @@ void printVector3d(Eigen::Vector3d vec, std::string name)
     std::cout << "----------------" << std::endl;
 }
 
+
+void MainWindow::on_printMagData_clicked()
+{
+    printVector3d(Vector3d(mag_xField,mag_yField,mag_zField ), "Magnetic Field");
+}

@@ -3,6 +3,11 @@
 *.[oa]
 /Timer
 Timer/
+Sensoray/
+Sensoray826/
+analogbutter.cpp
+analogbutter.h
+electromagnet-calibration/
 
 Makefile
 *.qmake.stash

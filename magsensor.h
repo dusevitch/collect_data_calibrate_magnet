@@ -1,6 +1,7 @@
 #ifndef MAGSENSOR_H
 #define MAGSENSOR_H
 
+
 #include <QtSerialPort/qserialport.h>
 #include <QtSerialPort/qserialportinfo.h>
 #include <QString>
@@ -11,8 +12,8 @@
 #include <QVector>
 #include <Timer/Timer.h>
 #include <pthread.h>
-//#include "magcalibration.cpp"
-//#include "sensorcontrol.h"
+#include "sensorcontrol.h"
+#include <polaristransformmatrix.h>
 
 
 //This is a simple class that controls the magnetic sensor, it has some bugs sometimes you need to unplug the sensor and restart things
@@ -37,22 +38,9 @@ class MagSensor
     bool MagSenseBegin();
     void MagSenseReadSensor(QVector<double> &outputReadings);
     bool MagSenseIsStarted();
-
-    //bool manualRead(QVector<double> & outputReadings);
-    bool getCalibrationData();
-    //sensor_pos rotationVector(QString name);
-    bool CalibPointMagSenseBegin();
-    void CalibPointMagSenseStop();
+//    void passReference(calibrationData & passedInfo);
 
     bool writeMeasurement();
-
-    int getCurButtonNumber();
-    void setCurButtonNumber(int i);
-
-
-    void printMatrix3d(Eigen::Matrix3d matrix, std::string name);
-
-    int cur_button_number=0;
 
 private:
     QSerialPort * magSensor;
@@ -61,19 +49,14 @@ private:
     QByteArray serialData;
     QString serialBuffer;
     Timer readTimer;
-    double * calibrationArray;
+
     SensorControl * senseController;
-
-
 
     int period;
     bool isStarted;
 
-
-    //pthread_mutex_t magMtx;
-
     bool threadedFunction(double elapsed_time);
-
+//    calibrationData * cal_data;
 };
 
 #endif // MAGSENSOR_H
