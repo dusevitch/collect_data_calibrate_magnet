@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(counter, SIGNAL(timeout()),this,SLOT(GUI_Update()));
     counter->start(25);
 
-    fh = new fileHandling();
+
 }
 
 MainWindow::~MainWindow()
@@ -186,9 +186,6 @@ void MainWindow::getCalibData(){
 
     qDebug() << "---------time = " << time << endl;
 
-    ElectromagnetCalibration calibration = omnimagnet_cal_1amp;
-    std::vector< MagneticMeasurement>dataList = dataList1;
-
     Vector3d cur_Field = Vector3d(mag_xField,mag_yField,mag_zField );
     printVector3d(cur_Field, "Current Field");
 
@@ -198,19 +195,49 @@ void MainWindow::getCalibData(){
 
     getCoilVals();
 
-//    Eigen::VectorXd current_vec = Eigen::VectorXd(coil0, coil1, coil2);
+    Eigen::Vector3d current_vec;
+    current_vec << coil0, coil1, coil2;
 
-    // Get sensor data at this point (field data)
-    // Make sure this data is transformed by the coordinate frame of the sensor, the position of the sensor with respect to the tracker, and
+//    // Get sensor data at this point (field data)
+//    // Make sure this data is transformed by the coordinate frame of the sensor, the position of the sensor with respect to the tracker, and
+
+    cur_Field_vec.append(cur_Field);
+    tracker_pos.append(tracker_wand_pose->pos);
+    cur_current_vec.append(current_vec);
+
+}
+
+void MainWindow::on_save_coil_vals_clicked()
+{
+    QLineEdit *calib_filename = MainWindow::findChild<QLineEdit *>("filename_calib");
+    std::string filename = calib_filename->text().toStdString();
+    std::string path{"output_calib_files/"};
 
 
-////    // Save the data in a data structure, and eliminate any data outside the workspace bounds
+    for(int i =0;i<)
+    qDebug() << "Calibration written to: " << QString::fromStdString(path+filename);
+}
+
+
+
+void CalibrateData(){
+    //for all the files here
+
+    //load the data
+
+    // put each of the data in magnetic measurements
+
+    // run full calibration
+
+    // save the calibration
+
+//// Save the data in a data structure, and eliminate any data outside the workspace bounds
 //    MagneticMeasurement cur_measurement;
 //    if (calibration.pointInWorkspace(tracker_wand_pose->pos)){
 //        cur_measurement =  MagneticMeasurement (cur_Field, tracker_wand_pose->pos, current_vec);
 //    }
-////    // Put this data into the format for the electromagnet calibration
 
+//  // Put this data into the format for the electromagnet calibration
 //    dataList.push_back(cur_measurement);
 }
 
@@ -483,23 +510,12 @@ void MainWindow::GUI_Update()
     }
 }
 
-void MainWindow::on_save_coil_vals_clicked()
-{
-    QLineEdit *calib_filename = MainWindow::findChild<QLineEdit *>("filename_calib");
-    std::string filename = calib_filename->text().toStdString();
-    std::string path{"output_calib_files/"};
-    omnimagnet_cal_1amp.writeCalibration(path+filename );
-}
+
 
 
 
 void MainWindow::on_load_calib_file_clicked()
 {
-//    //File Handler
-//      QStringList tableInputData;
-//      tableInputData = fh->openLoadPrompt();
-//      qDebug() << tableInputData << endl;
-
       // QFile Dialog
       QFileDialog dialog(this);
       dialog.setFileMode(QFileDialog::AnyFile);

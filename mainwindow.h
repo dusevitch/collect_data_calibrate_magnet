@@ -17,7 +17,7 @@
 #include "magsensor.h"
 #include "sensorcontrol.h"
 #include <mutex>
-#include "FileHandling/filehandling.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -89,16 +89,8 @@ public:
 
     SensorControl * sensorController;
 
-//    ElectromagnetCalibration current_calibration;
-//    std::vector<MagneticMeasurement> current_data_list;
-
-    std::vector<MagneticMeasurement> dataList1;
-    std::vector<MagneticMeasurement> dataList20;
-    std::vector<MagneticMeasurement> dataList40;
-
-    ElectromagnetCalibration omnimagnet_cal_1amp = ElectromagnetCalibration("initial_guess.yaml");
-    ElectromagnetCalibration omnimagnet_cal_20amp = ElectromagnetCalibration("initial_guess.yaml");
-    ElectromagnetCalibration omnimagnet_cal_40amp = ElectromagnetCalibration("initial_guess.yaml");
+    ElectromagnetCalibration calibration = ElectromagnetCalibration("initial_guess.yaml");
+    std::vector< MagneticMeasurement>dataList;
 
     Eigen::Matrix3d sensor_to_RHS;
 
@@ -106,7 +98,10 @@ public:
 
     int displayCounter{0};
 
-    fileHandling * fh;
+    std::vector <Vector3d> cur_Field_vec;
+    std::vector <Vector3d> tracker_pos;
+    std::vector <Vector3d> cur_current_vec;
+
 
 private slots:
     void on_activate_mag_toggled(bool checked);

@@ -19,11 +19,9 @@ SOURCES += main.cpp\
     sensorcontrol.cpp \
     analogbutter.cpp \
     thermocouple.cpp \
-    ../Libraries/FileHandler/FileHandler.cpp \
     Sensoray/Sensoray.cpp \
     electromagnet-calibration/scalorPotential.cpp \
     electromagnet-calibration/electromagnet_calibration.cpp \
-    FileHandling/filehandling.cpp
 
 HEADERS  += mainwindow.h \
     Timer/Timer.h \
@@ -34,12 +32,10 @@ HEADERS  += mainwindow.h \
     analogbutter.h \
     thermocouple.h \
     Sensoray826/826api.h \
-    ../Libraries/FileHandler/FileHandler.h \
     Sensoray/Sensoray.h \
     electromagnet-calibration/scalorPotential.h \
     electromagnet-calibration/electromagnet_calibration.h \
-    electromagnet-calibration/EigenToYAML.h \
-    FileHandling/filehandling.h
+    electromagnet-calibration/EigenToYAML.h
 
 FORMS    += mainwindow.ui
 
