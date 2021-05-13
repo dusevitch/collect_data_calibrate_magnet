@@ -17,6 +17,7 @@
 #include "magsensor.h"
 #include "sensorcontrol.h"
 #include <mutex>
+#include "FileHandling/filehandling.h"
 
 namespace Ui {
 class MainWindow;
@@ -61,9 +62,9 @@ public:
     double tracker_base_y_val = -1000;
     double tracker_base_z_val = -1000;
 
-    double coil0 = 0;
-    double coil1 = 0;
-    double coil2 = 0;
+    double coil0 = 0.0;
+    double coil1 = 0.0;
+    double coil2 = 0.0;
 
     double innerCoilGain;
     double middleCoilGain;
@@ -105,6 +106,8 @@ public:
 
     int displayCounter{0};
 
+    fileHandling * fh;
+
 private slots:
     void on_activate_mag_toggled(bool checked);
 
@@ -125,6 +128,10 @@ private slots:
     void on_printMagData_clicked();
 
     void GUI_Update();
+
+    void on_save_coil_vals_clicked();
+
+    void on_load_calib_file_clicked();
 
 private:
     Ui::MainWindow *ui;

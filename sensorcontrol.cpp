@@ -427,7 +427,7 @@ void SensorControl::sendVal(uint channel, double val){
 
 void SensorControl::sendAmps(int coil, double value){
 
-    this->sendValNOTEMPLOCK(coil,northSouth*value/coilGains->at(coil));
+    this->sendValNOTEMPLOCK(coil,value/coilGains->at(coil));
 
 }
 void SensorControl::sendAmpsMagSensor(int coil, double value){

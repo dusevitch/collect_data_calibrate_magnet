@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     ../Libraries/FileHandler/FileHandler.cpp \
     Sensoray/Sensoray.cpp \
     electromagnet-calibration/scalorPotential.cpp \
-    electromagnet-calibration/electromagnet_calibration.cpp
+    electromagnet-calibration/electromagnet_calibration.cpp \
+    FileHandling/filehandling.cpp
 
 HEADERS  += mainwindow.h \
     Timer/Timer.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     Sensoray/Sensoray.h \
     electromagnet-calibration/scalorPotential.h \
     electromagnet-calibration/electromagnet_calibration.h \
-    electromagnet-calibration/EigenToYAML.h
+    electromagnet-calibration/EigenToYAML.h \
+    FileHandling/filehandling.h
 
 FORMS    += mainwindow.ui
 

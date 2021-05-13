@@ -8,6 +8,7 @@ Sensoray826/
 analogbutter.cpp
 analogbutter.h
 electromagnet-calibration/
+FileHandling/
 
 Makefile
 *.qmake.stash

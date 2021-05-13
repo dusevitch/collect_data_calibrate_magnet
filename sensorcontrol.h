@@ -193,7 +193,7 @@ private:
     double timeLapse;
     double lastTime;
     int threadCount;
-    int northSouth;
+    int northSouth{1};
 
     bool writing;
     bool threading;

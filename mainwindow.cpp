@@ -7,7 +7,6 @@
 #include <QString>
 
 
-
 polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat);
 Eigen::Matrix4d inverseTransformationMatrix(const Eigen::Matrix4d &trans_mat);
 void printVector3d(Eigen::Vector3d vec, std::string name);
@@ -39,6 +38,16 @@ MainWindow::MainWindow(QWidget *parent) :
     // This frame is the frame aligned with the table coordinate frame
     // when the sensor handle extends towards the drawer, and the sensor
     // is on top.
+
+    innerCoilGain = 12.498;
+    middleCoilGain = 13.53;
+    outerCoilGain = 9.579;
+
+    ampGains.append(innerCoilGain);
+    ampGains.append(middleCoilGain);
+    ampGains.append(outerCoilGain);
+    sensorController->setAmpGains(ampGains);
+
     sensor_to_RHS << 1, 2, 3,
                      4, 5, 6,
                      7, 8, 9;
@@ -47,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
     counter = new QTimer;
     connect(counter, SIGNAL(timeout()),this,SLOT(GUI_Update()));
     counter->start(25);
+
+    fh = new fileHandling();
 }
 
 MainWindow::~MainWindow()
@@ -56,25 +67,41 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_activate_mag_toggled(bool checked)
 {
-    // Activate the specific coil value set
+    if (checked){
+        // Activate the specific coil value set
 
-    // Check if values in the coils (check if values greater than 40 amps and set error message
-    getCoilVals();
+        // Check if values in the coils (check if values greater than 40 amps and set error message
+        getCoilVals();
 
-        // read the coil values and set an error message
-    if (coil0>40 || coil0<0  || coil1>40 || coil1<0  || coil2>40 || coil2<0 ){
-        // Error message
-        QMessageBox msgBox;
-        msgBox.setText("Invalid Values for coils. Keep between 0 amps and 40 amps");
-        msgBox.exec();
+            // read the coil values and set an error message
+        if (coil0>40.0 || coil0<0.0  || coil1>40.0 || coil1<0.0  || coil2>40.0 || coil2<0.0 ){
+            // Error message
+            QMessageBox msgBox;
+            msgBox.setText("Invalid Values for coils. Keep between 0 amps and 40 amps");
+            msgBox.exec();
 
+            sensorController->sendVal(0,0.00);
+            sensorController->sendVal(1,0.00);
+            sensorController->sendVal(2,0.00);
+
+            ui->activate_mag->setStyleSheet("background-color: none");
+            ui->activate_mag->setText("ACTIVATE MAG");
+        }else{
+            // Turn on the coils (using the same code that is used in Cam's gui
+            sensorController->sendAmps(0,coil0);
+            sensorController->sendAmps(1,coil1);
+            sensorController->sendAmps(2,coil2);
+            ui->activate_mag->setStyleSheet("background-color: red");
+            ui->activate_mag->setText("DEACTIVATE MAG");
+        }
     }else{
-        // Turn on the coils (using the same code that is used in Cam's gui
-
+        sensorController->sendVal(0,0.00);
+        sensorController->sendVal(1,0.00);
+        sensorController->sendVal(2,0.00);
+        ui->activate_mag->setStyleSheet("background-color: none");
+        ui->activate_mag->setText("ACTIVATE MAG");
     }
 }
-
-
 
 
 void MainWindow::readMagData(){
@@ -87,12 +114,10 @@ void MainWindow::readMagData(){
             ui->mag_sense_y->display(temp[1]);
             ui->mag_sense_z->display(temp[2]);
 
-
             // Globally accessable variables to store data in
             mag_xField = temp[0];
             mag_yField = temp[1];
             mag_zField = temp[2];
-
 }
 
 void MainWindow::getCoilVals(){
@@ -106,7 +131,7 @@ void MainWindow::getCoilVals(){
     QString coil1String =coil_1_val->text();
     coil1=coil1String.toDouble();
 
-    QString coil2String =coil_2_val->text();
+    QString coil2String=coil_2_val->text();
     coil2=coil2String.toDouble();
 }
 
@@ -189,18 +214,6 @@ void MainWindow::getCalibData(){
 //    dataList.push_back(cur_measurement);
 }
 
-
-
-//void MainWindow::on_actiontestSave_triggered()
-//{
-//    saveFile();
-//}
-
-//void MainWindow::saveFile ()
-//{
-//    QString fname = QFileDialog::getSaveFileName(nullptr, "test sav e name", ".", "Images (*.png *.xpm *.jpg);;Text files (*.txt);;XML files (*.xml)" );
-//    qDebug() << "name is : " << fname;
-//}
 
 
 void MainWindow::startPolaris()
@@ -453,9 +466,6 @@ void MainWindow::GUI_Update()
 
 
     if(displayCounter > 10){
-//        ui->xAmpsLCD->display(tempXAmps);
-//        ui->yAmpsLCD->display(tempYAmps);
-//        ui->zAmpsLCD->display(tempZAmps);
 
         ui->InnerTempLCD->display(tempTempInner1);
         ui->middleTempLCD->display(tempTempMiddle1);
@@ -471,5 +481,38 @@ void MainWindow::GUI_Update()
 
         this->on_activate_mag_toggled(false);
     }
+}
+
+void MainWindow::on_save_coil_vals_clicked()
+{
+    QLineEdit *calib_filename = MainWindow::findChild<QLineEdit *>("filename_calib");
+    std::string filename = calib_filename->text().toStdString();
+    std::string path{"output_calib_files/"};
+    omnimagnet_cal_1amp.writeCalibration(path+filename );
+}
+
+
+
+void MainWindow::on_load_calib_file_clicked()
+{
+//    //File Handler
+//      QStringList tableInputData;
+//      tableInputData = fh->openLoadPrompt();
+//      qDebug() << tableInputData << endl;
+
+      // QFile Dialog
+      QFileDialog dialog(this);
+      dialog.setFileMode(QFileDialog::AnyFile);
+      dialog.setViewMode(QFileDialog::Detail);
+
+      QStringList fileNames;
+      if (dialog.exec())
+          fileNames = dialog.selectedFiles();
+
+      for ( const auto& i : fileNames  )
+      {
+        ui->list_textEdit->append(i);
+      }
+
 
 }

@@ -18,11 +18,11 @@
 #include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
-#include <QtWidgets/QListView>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
@@ -88,10 +88,11 @@ public:
     QPushButton *updateBase;
     QPushButton *printMagData;
     QFrame *line_4;
-    QListView *listView;
-    QPushButton *pushButton;
+    QPushButton *load_calib_file;
     QLabel *label_24;
     QPushButton *pushButton_2;
+    QLineEdit *filename_calib;
+    QTextEdit *list_textEdit;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -139,13 +140,13 @@ public:
         label_6->setGeometry(QRect(260, 120, 91, 16));
         timer_cur = new QLCDNumber(centralWidget);
         timer_cur->setObjectName(QStringLiteral("timer_cur"));
-        timer_cur->setGeometry(QRect(200, 560, 91, 31));
+        timer_cur->setGeometry(QRect(200, 540, 91, 31));
         label_7 = new QLabel(centralWidget);
         label_7->setObjectName(QStringLiteral("label_7"));
-        label_7->setGeometry(QRect(150, 570, 59, 14));
+        label_7->setGeometry(QRect(150, 550, 59, 14));
         collect_data = new QPushButton(centralWidget);
         collect_data->setObjectName(QStringLiteral("collect_data"));
-        collect_data->setGeometry(QRect(170, 490, 141, 41));
+        collect_data->setGeometry(QRect(170, 470, 141, 41));
         collect_data->setCheckable(true);
         tracker_base_y = new QLCDNumber(centralWidget);
         tracker_base_y->setObjectName(QStringLiteral("tracker_base_y"));
@@ -229,7 +230,7 @@ public:
         line_2->setFrameShadow(QFrame::Sunken);
         save_coil_vals = new QPushButton(centralWidget);
         save_coil_vals->setObjectName(QStringLiteral("save_coil_vals"));
-        save_coil_vals->setGeometry(QRect(170, 620, 121, 22));
+        save_coil_vals->setGeometry(QRect(300, 610, 121, 22));
         label_18 = new QLabel(centralWidget);
         label_18->setObjectName(QStringLiteral("label_18"));
         label_18->setGeometry(QRect(190, 380, 101, 16));
@@ -292,18 +293,22 @@ public:
         line_4->setGeometry(QRect(510, 130, 441, 20));
         line_4->setFrameShape(QFrame::HLine);
         line_4->setFrameShadow(QFrame::Sunken);
-        listView = new QListView(centralWidget);
-        listView->setObjectName(QStringLiteral("listView"));
-        listView->setGeometry(QRect(730, 440, 181, 151));
-        pushButton = new QPushButton(centralWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(570, 440, 121, 31));
+        load_calib_file = new QPushButton(centralWidget);
+        load_calib_file->setObjectName(QStringLiteral("load_calib_file"));
+        load_calib_file->setGeometry(QRect(570, 440, 121, 31));
         label_24 = new QLabel(centralWidget);
         label_24->setObjectName(QStringLiteral("label_24"));
         label_24->setGeometry(QRect(778, 410, 71, 20));
         pushButton_2 = new QPushButton(centralWidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
         pushButton_2->setGeometry(QRect(570, 480, 121, 31));
+        filename_calib = new QLineEdit(centralWidget);
+        filename_calib->setObjectName(QStringLiteral("filename_calib"));
+        filename_calib->setGeometry(QRect(100, 610, 191, 22));
+        filename_calib->setPlaceholderText(QStringLiteral(""));
+        list_textEdit = new QTextEdit(centralWidget);
+        list_textEdit->setObjectName(QStringLiteral("list_textEdit"));
+        list_textEdit->setGeometry(QRect(720, 440, 201, 151));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
@@ -360,9 +365,10 @@ public:
         label_23->setText(QApplication::translate("MainWindow", "Coil Temp Outer", 0));
         updateBase->setText(QApplication::translate("MainWindow", "Update Base", 0));
         printMagData->setText(QApplication::translate("MainWindow", "print mag data", 0));
-        pushButton->setText(QApplication::translate("MainWindow", "Load Calib File", 0));
+        load_calib_file->setText(QApplication::translate("MainWindow", "Load Calib File", 0));
         label_24->setText(QApplication::translate("MainWindow", "Calib Files", 0));
-        pushButton_2->setText(QApplication::translate("MainWindow", "Delete Calib File", 0));
+        pushButton_2->setText(QApplication::translate("MainWindow", "Delete Files", 0));
+        filename_calib->setText(QApplication::translate("MainWindow", "filename", 0));
     } // retranslateUi
 
 };

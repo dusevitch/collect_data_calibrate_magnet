@@ -155,7 +155,7 @@
     <property name="geometry">
      <rect>
       <x>200</x>
-      <y>560</y>
+      <y>540</y>
       <width>91</width>
       <height>31</height>
      </rect>
@@ -165,7 +165,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>570</y>
+      <y>550</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -178,7 +178,7 @@
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>490</y>
+      <y>470</y>
       <width>141</width>
       <height>41</height>
      </rect>
@@ -487,8 +487,8 @@
    <widget class="QPushButton" name="save_coil_vals">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>620</y>
+      <x>300</x>
+      <y>610</y>
       <width>121</width>
       <height>22</height>
      </rect>
@@ -733,17 +733,7 @@
      <enum>Qt::Horizontal</enum>
     </property>
    </widget>
-   <widget class="QListView" name="listView">
-    <property name="geometry">
-     <rect>
-      <x>730</x>
-      <y>440</y>
-      <width>181</width>
-      <height>151</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="load_calib_file">
     <property name="geometry">
      <rect>
       <x>570</x>
@@ -779,7 +769,33 @@
      </rect>
     </property>
     <property name="text">
-     <string>Delete Calib File</string>
+     <string>Delete Files</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="filename_calib">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>610</y>
+      <width>191</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>filename</string>
+    </property>
+    <property name="placeholderText">
+     <string notr="true" extracomment="filename"/>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="list_textEdit">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>440</y>
+      <width>201</width>
+      <height>151</height>
+     </rect>
     </property>
    </widget>
   </widget>
