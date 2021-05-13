@@ -103,6 +103,8 @@ public:
 
     const double sampling_rate_ms{100.0};
 
+    int displayCounter{0};
+
 private slots:
     void on_activate_mag_toggled(bool checked);
 
@@ -120,8 +122,9 @@ private slots:
 
     void getCalibData();
 
-
     void on_printMagData_clicked();
+
+    void GUI_Update();
 
 private:
     Ui::MainWindow *ui;

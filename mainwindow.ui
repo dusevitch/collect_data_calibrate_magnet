@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>743</width>
-    <height>665</height>
+    <width>966</width>
+    <height>722</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,38 +17,38 @@
    <widget class="QLCDNumber" name="mag_sense_x">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>60</y>
-      <width>64</width>
-      <height>23</height>
+      <x>663</x>
+      <y>50</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="mag_sense_y">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>60</y>
-      <width>64</width>
-      <height>23</height>
+      <x>760</x>
+      <y>50</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="mag_sense_z">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>60</y>
-      <width>64</width>
-      <height>23</height>
+      <x>860</x>
+      <y>50</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>560</x>
-      <y>40</y>
+      <x>760</x>
+      <y>30</y>
       <width>111</width>
       <height>20</height>
      </rect>
@@ -60,8 +60,8 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>90</y>
+      <x>690</x>
+      <y>100</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -73,8 +73,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>90</y>
+      <x>800</x>
+      <y>100</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -86,8 +86,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>90</y>
+      <x>890</x>
+      <y>100</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -99,7 +99,7 @@
    <widget class="QPushButton" name="start_sensor">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>510</x>
       <y>50</y>
       <width>101</width>
       <height>41</height>
@@ -115,18 +115,21 @@
    <widget class="QLineEdit" name="coil_0_current">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>30</y>
+      <x>360</x>
+      <y>50</y>
       <width>61</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>30</y>
+      <x>260</x>
+      <y>50</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -138,8 +141,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>100</y>
+      <x>260</x>
+      <y>120</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -151,8 +154,8 @@
    <widget class="QLCDNumber" name="timer_cur">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>510</y>
+      <x>200</x>
+      <y>560</y>
       <width>91</width>
       <height>31</height>
      </rect>
@@ -161,8 +164,8 @@
    <widget class="QLabel" name="label_7">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>520</y>
+      <x>150</x>
+      <y>570</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -174,8 +177,8 @@
    <widget class="QPushButton" name="collect_data">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>450</y>
+      <x>170</x>
+      <y>490</y>
       <width>141</width>
       <height>41</height>
      </rect>
@@ -190,28 +193,28 @@
    <widget class="QLCDNumber" name="tracker_base_y">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>150</y>
-      <width>64</width>
-      <height>23</height>
+      <x>760</x>
+      <y>182</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="tracker_base_x">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>150</y>
-      <width>64</width>
-      <height>23</height>
+      <x>663</x>
+      <y>182</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>130</y>
+      <x>750</x>
+      <y>160</y>
       <width>111</width>
       <height>20</height>
      </rect>
@@ -223,18 +226,18 @@
    <widget class="QLCDNumber" name="tracker_base_z">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>150</y>
-      <width>64</width>
-      <height>23</height>
+      <x>860</x>
+      <y>182</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_9">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>180</y>
+      <x>790</x>
+      <y>230</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -246,8 +249,8 @@
    <widget class="QLabel" name="label_10">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>180</y>
+      <x>890</x>
+      <y>230</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -259,8 +262,8 @@
    <widget class="QLabel" name="label_11">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>180</y>
+      <x>700</x>
+      <y>230</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -272,8 +275,8 @@
    <widget class="QLabel" name="label_12">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>210</y>
+      <x>750</x>
+      <y>260</y>
       <width>111</width>
       <height>20</height>
      </rect>
@@ -285,8 +288,8 @@
    <widget class="QLabel" name="label_13">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>260</y>
+      <x>890</x>
+      <y>330</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -298,8 +301,8 @@
    <widget class="QLabel" name="label_14">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>260</y>
+      <x>690</x>
+      <y>330</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -311,8 +314,8 @@
    <widget class="QLabel" name="label_15">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>260</y>
+      <x>790</x>
+      <y>330</y>
       <width>59</width>
       <height>14</height>
      </rect>
@@ -324,38 +327,38 @@
    <widget class="QLCDNumber" name="tracker_wand_y">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>230</y>
-      <width>64</width>
-      <height>23</height>
+      <x>760</x>
+      <y>280</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="tracker_wand_x">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>230</y>
-      <width>64</width>
-      <height>23</height>
+      <x>663</x>
+      <y>280</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLCDNumber" name="tracker_wand_z">
     <property name="geometry">
      <rect>
-      <x>640</x>
-      <y>230</y>
-      <width>64</width>
-      <height>23</height>
+      <x>860</x>
+      <y>280</y>
+      <width>91</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QPushButton" name="start_polaris">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>140</y>
+      <x>510</x>
+      <y>180</y>
       <width>101</width>
       <height>41</height>
      </rect>
@@ -370,8 +373,8 @@
    <widget class="QPushButton" name="activate_mag">
     <property name="geometry">
      <rect>
-      <x>100</x>
-      <y>210</y>
+      <x>170</x>
+      <y>260</y>
       <width>131</width>
       <height>51</height>
      </rect>
@@ -389,8 +392,8 @@
    <widget class="QPushButton" name="run_calib">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>470</y>
+      <x>560</x>
+      <y>610</y>
       <width>141</width>
       <height>41</height>
      </rect>
@@ -405,8 +408,8 @@
    <widget class="QPushButton" name="save_calib">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>540</y>
+      <x>750</x>
+      <y>610</y>
       <width>141</width>
       <height>41</height>
      </rect>
@@ -418,9 +421,9 @@
    <widget class="Line" name="line">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>370</y>
-      <width>671</width>
+      <x>20</x>
+      <y>350</y>
+      <width>931</width>
       <height>20</height>
      </rect>
     </property>
@@ -431,11 +434,18 @@
    <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
-      <x>350</x>
+      <x>450</x>
       <y>10</y>
-      <width>59</width>
-      <height>14</height>
+      <width>71</width>
+      <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+      <underline>true</underline>
+     </font>
     </property>
     <property name="text">
      <string>SETTINGS</string>
@@ -444,11 +454,18 @@
    <widget class="QLabel" name="label_17">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>420</y>
-      <width>71</width>
+      <x>680</x>
+      <y>380</y>
+      <width>81</width>
       <height>20</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+      <underline>true</underline>
+     </font>
     </property>
     <property name="text">
      <string>Calibration</string>
@@ -457,10 +474,10 @@
    <widget class="Line" name="line_2">
     <property name="geometry">
      <rect>
-      <x>353</x>
-      <y>400</y>
+      <x>470</x>
+      <y>390</y>
       <width>20</width>
-      <height>221</height>
+      <height>261</height>
      </rect>
     </property>
     <property name="orientation">
@@ -470,8 +487,8 @@
    <widget class="QPushButton" name="save_coil_vals">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>570</y>
+      <x>170</x>
+      <y>620</y>
       <width>121</width>
       <height>22</height>
      </rect>
@@ -483,11 +500,18 @@
    <widget class="QLabel" name="label_18">
     <property name="geometry">
      <rect>
-      <x>140</x>
-      <y>410</y>
+      <x>190</x>
+      <y>380</y>
       <width>101</width>
       <height>16</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+      <underline>true</underline>
+     </font>
     </property>
     <property name="text">
      <string>Coil Collection</string>
@@ -496,18 +520,21 @@
    <widget class="QLineEdit" name="coil_1_current">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>100</y>
+      <x>360</x>
+      <y>120</y>
       <width>61</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_19">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>170</y>
+      <x>260</x>
+      <y>190</y>
       <width>91</width>
       <height>16</height>
      </rect>
@@ -519,31 +546,34 @@
    <widget class="QLineEdit" name="coil_2_current">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>170</y>
+      <x>360</x>
+      <y>190</y>
       <width>61</width>
       <height>22</height>
      </rect>
+    </property>
+    <property name="text">
+     <string>0</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_20">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>330</y>
+      <x>90</x>
+      <y>430</y>
       <width>181</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>TIME to Collect in sec (30 fps)</string>
+     <string>TIME to Collect in sec (30 fps):</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="collect_time_s">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>330</y>
+      <x>280</x>
+      <y>430</y>
       <width>113</width>
       <height>22</height>
      </rect>
@@ -552,41 +582,41 @@
      <string>5</string>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="lcdNumber">
+   <widget class="QLCDNumber" name="InnerTempLCD">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>64</width>
-      <height>23</height>
+      <x>20</x>
+      <y>50</y>
+      <width>111</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="lcdNumber_2">
+   <widget class="QLCDNumber" name="middleTempLCD">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>100</y>
-      <width>64</width>
-      <height>23</height>
+      <x>20</x>
+      <y>120</y>
+      <width>111</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="lcdNumber_3">
+   <widget class="QLCDNumber" name="middleTempLCD_2">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>100</y>
-      <width>64</width>
-      <height>23</height>
+      <x>140</x>
+      <y>120</y>
+      <width>101</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_21">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>10</y>
+      <x>90</x>
+      <y>30</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -595,22 +625,22 @@
      <string>Coil Temp Inner</string>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="lcdNumber_4">
+   <widget class="QLCDNumber" name="InnerTempLCD_2">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>30</y>
-      <width>64</width>
-      <height>23</height>
+      <x>133</x>
+      <y>50</y>
+      <width>111</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="QLabel" name="label_22">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>80</y>
-      <width>101</width>
+      <x>90</x>
+      <y>100</y>
+      <width>111</width>
       <height>16</height>
      </rect>
     </property>
@@ -621,8 +651,8 @@
    <widget class="QLabel" name="label_23">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>150</y>
+      <x>90</x>
+      <y>170</y>
       <width>101</width>
       <height>16</height>
      </rect>
@@ -631,33 +661,33 @@
      <string>Coil Temp Outer</string>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="lcdNumber_5">
+   <widget class="QLCDNumber" name="outerTempLCD">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>170</y>
-      <width>64</width>
-      <height>23</height>
+      <x>20</x>
+      <y>190</y>
+      <width>111</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLCDNumber" name="lcdNumber_6">
+   <widget class="QLCDNumber" name="outerTempLCD_2">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>170</y>
-      <width>64</width>
-      <height>23</height>
+      <x>133</x>
+      <y>190</y>
+      <width>111</width>
+      <height>41</height>
      </rect>
     </property>
    </widget>
    <widget class="Line" name="line_3">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>470</x>
       <y>50</y>
       <width>20</width>
-      <height>241</height>
+      <height>281</height>
      </rect>
     </property>
     <property name="orientation">
@@ -667,8 +697,8 @@
    <widget class="QPushButton" name="updateBase">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>200</y>
+      <x>510</x>
+      <y>240</y>
       <width>101</width>
       <height>22</height>
      </rect>
@@ -680,7 +710,7 @@
    <widget class="QPushButton" name="printMagData">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>510</x>
       <y>100</y>
       <width>101</width>
       <height>22</height>
@@ -690,13 +720,75 @@
      <string>print mag data</string>
     </property>
    </widget>
+   <widget class="Line" name="line_4">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>130</y>
+      <width>441</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QListView" name="listView">
+    <property name="geometry">
+     <rect>
+      <x>730</x>
+      <y>440</y>
+      <width>181</width>
+      <height>151</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>440</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Load Calib File</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_24">
+    <property name="geometry">
+     <rect>
+      <x>778</x>
+      <y>410</y>
+      <width>71</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Calib Files</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>480</y>
+      <width>121</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delete Calib File</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>743</width>
+     <width>966</width>
      <height>19</height>
     </rect>
    </property>

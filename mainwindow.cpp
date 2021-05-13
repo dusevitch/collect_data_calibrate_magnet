@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //insertionDevice = new ActsAsynch();
 
     sensorController = new SensorControl(shutDownTemp);
-
+    sensorController->start_Threading(30);
     // Matrix from the sensor frame to a right handed coordinate frame
     // This frame is the frame aligned with the table coordinate frame
     // when the sensor handle extends towards the drawer, and the sensor
@@ -42,6 +42,11 @@ MainWindow::MainWindow(QWidget *parent) :
     sensor_to_RHS << 1, 2, 3,
                      4, 5, 6,
                      7, 8, 9;
+
+    // connect the GUI_Update slot to get Magnet Temperatures
+    counter = new QTimer;
+    connect(counter, SIGNAL(timeout()),this,SLOT(GUI_Update()));
+    counter->start(25);
 }
 
 MainWindow::~MainWindow()
@@ -68,6 +73,9 @@ void MainWindow::on_activate_mag_toggled(bool checked)
 
     }
 }
+
+
+
 
 void MainWindow::readMagData(){
     QVector<double> temp(3);
@@ -134,6 +142,7 @@ void MainWindow::on_collect_data_toggled(bool checked)
         connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData()));
         timer->start(sampling_rate_ms);
 
+
     }else{
         timer->stop();
 
@@ -144,7 +153,7 @@ void MainWindow::on_collect_data_toggled(bool checked)
 void MainWindow::getCalibData(){
 
     time = time-sampling_rate_ms;
-
+    ui->timer_cur->display(time/1000.0);
     if (time <=0){
         timer->stop();
     }
@@ -401,4 +410,66 @@ void printVector3d(Eigen::Vector3d vec, std::string name)
 void MainWindow::on_printMagData_clicked()
 {
     printVector3d(Vector3d(mag_xField,mag_yField,mag_zField ), "Magnetic Field");
+}
+
+
+void MainWindow::GUI_Update()
+{
+
+    double tempTime;
+    double tempXAmps;
+    double tempYAmps;
+    double tempZAmps;
+    double tempTempInner1;
+    double tempTempInner2;
+    double tempTempMiddle1;
+    double tempTempMiddle2;
+    double tempTempOuter1;
+    double tempTempOuter2;
+
+
+    //Get all the sensor values from the sensorController Structure
+    if(sensorController->read_lock("GUI UPDATE")){
+
+        tempXAmps = sensorController->dataStructure.xAmps->constLast();
+        tempYAmps = sensorController->dataStructure.yAmps->constLast();
+        tempZAmps = sensorController->dataStructure.zAmps->constLast();
+
+        tempTime = sensorController->dataStructure.xTime->constLast();
+
+        tempTempInner1 = sensorController->dataStructure.inTemp1->constLast();
+        tempTempInner2 = sensorController->dataStructure.inTemp2->constLast();
+        tempTempMiddle1 = sensorController->dataStructure.midTemp1->constLast();
+        tempTempMiddle2 = sensorController->dataStructure.midTemp2->constLast();
+        tempTempOuter1 = sensorController->dataStructure.outTemp1->constLast();
+        tempTempOuter2 = sensorController->dataStructure.outTemp2->constLast();
+
+        sensorController->rw_unlock();
+
+    }
+
+    //only display every 10 times around if its too fast its impossible to read the numbers in time
+    displayCounter++;
+
+
+    if(displayCounter > 10){
+//        ui->xAmpsLCD->display(tempXAmps);
+//        ui->yAmpsLCD->display(tempYAmps);
+//        ui->zAmpsLCD->display(tempZAmps);
+
+        ui->InnerTempLCD->display(tempTempInner1);
+        ui->middleTempLCD->display(tempTempMiddle1);
+        ui->outerTempLCD->display(tempTempOuter1);
+
+        ui->InnerTempLCD_2->display(tempTempInner2);
+        ui->middleTempLCD_2->display(tempTempMiddle2);
+        ui->outerTempLCD_2->display(tempTempOuter2);
+    }
+
+    //Check to see if the temperature is locked
+    if(sensorController->isTempLocked()){
+
+        this->on_activate_mag_toggled(false);
+    }
+
 }
