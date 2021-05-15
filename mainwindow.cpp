@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QFileDialog>
 #include <QString>
+#include <QTextCodec>
 
 
 polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat);
@@ -183,41 +184,75 @@ void MainWindow::getCalibData(){
         timer->stop();
     }
 
+    // 1 - Get Position of Tracker (in m not mm) with respect to the base magnet pose
+    Vector3d sensor_pos = Vector3d(tracker_wand_x_val,tracker_wand_y_val,tracker_wand_z_val); // This already takes into account the transformation into the base frame
+    Vector3d cur_wand_pos = Vector3d(sensor_pos[0]/1000,sensor_pos[1]/1000,sensor_pos[2]/1000);
 
-    qDebug() << "---------time = " << time << endl;
+    // 2 - Proper field: -------------------------------------
+    // Make sure this is transformed by the coordinate frame of the sensor,
+    // the position of the sensor with respect to the tracker
 
-    Vector3d cur_Field = Vector3d(mag_xField,mag_yField,mag_zField );
-    printVector3d(cur_Field, "Current Field");
+    // initial field value:  Store Field, in Tesla (Divide mT by 1000)
+    Vector3d cur_Field_init = Vector3d(mag_xField/1000,mag_yField/1000,mag_zField/1000);
 
-    // collect rotation and translation of the wand with respect to the magnet
-    printVector3d(tracker_wand_pose->pos, "Current Position");
-    printMatrix3d(tracker_wand_pose->rot_mat, "Current Rot");
+        // a) get the coord frame of the magnet sensor in wand frame (get into the right handed coordinate frame)
+        Matrix3d w_R_s;
+        w_R_s << 0, 0, -1,
+                 0, -1, 0,
+                 1, 0, 0;
 
+        // b) m_R_p * p_R_w * w_R_s * s_F = m=magnet frame, p=polaris frame, w=wand frame, s=sensor frame,F=field vector
+        Vector3d cur_Field =  tracker_base_pose->inv_rot_mat * tracker_wand_pose->rot_mat * w_R_s * cur_Field_init;
+
+    // 3 - Get Current Applied in Amps
     getCoilVals();
-
     Eigen::Vector3d current_vec;
     current_vec << coil0, coil1, coil2;
 
-//    // Get sensor data at this point (field data)
-//    // Make sure this data is transformed by the coordinate frame of the sensor, the position of the sensor with respect to the tracker, and
+    // Optional: Print Output
+    qDebug() << "---------time = " << time << endl;
+//    printVector3d(cur_Field, "Current Field");
+//    printVector3d(tracker_wand_pose->pos, "Current Position");
+//    printMatrix3d(tracker_wand_pose->rot_mat, "Current Rot");
 
-    cur_Field_vec.append(cur_Field);
-    tracker_pos.append(tracker_wand_pose->pos);
-    cur_current_vec.append(current_vec);
+    qDebug() << cur_Field[0]<<","<<cur_Field[1]<<","<<cur_Field[2]<<","<<cur_wand_pos[0]<<","<<cur_wand_pos[1]<<","<<cur_wand_pos[2]<<","<<current_vec[0]<<","<<current_vec[1]<<","<<current_vec[2];
+
+    // Apply data to vectors to save as file
+    cur_Field_vec.push_back(cur_Field);
+    tracker_pos.push_back(cur_wand_pos);
+    cur_current_vec.push_back(current_vec);
 
 }
 
 void MainWindow::on_save_coil_vals_clicked()
 {
     QLineEdit *calib_filename = MainWindow::findChild<QLineEdit *>("filename_calib");
-    std::string filename = calib_filename->text().toStdString();
-    std::string path{"output_calib_files/"};
+    QString filename = calib_filename->text();
+    QString path{"output_calib_files/"};
 
+    QFile file(path+filename);
 
-    for(int i =0;i<)
-    qDebug() << "Calibration written to: " << QString::fromStdString(path+filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+    for(int i =0;i<cur_Field_vec.size();i++){
+        out << cur_Field_vec[i][0] << "," << cur_Field_vec[i][1] << "," << cur_Field_vec[i][2] << "," <<
+        tracker_pos[i][0] << "," << tracker_pos[i][1] << "," << tracker_pos[i][2] << "," <<
+        cur_current_vec[i][0] << "," << cur_current_vec[i][1] << "," << cur_current_vec[i][2] << "\n";
+
+    }
+
+    file.close();
+
+    // Clear the values in the vectors
+    cur_Field_vec.clear();
+    tracker_pos.clear();
+    cur_current_vec.clear();
+
+    qDebug() << "Calibration written to: " << (path+filename);
+
 }
-
 
 
 void CalibrateData(){
@@ -298,21 +333,10 @@ void MainWindow::stopPolaris(){
 }
 
 bool MainWindow::updateCurrPos(){
-//    // THIS SHOULD BE IN THE SENSOR CODE:
-//    // Magnetic Sensor
-//    QLCDNumber *mag_sense_x = MainWindow::findChild<QLCDNumber *>("mag_sense_x");
-//    QLCDNumber *mag_sense_y = MainWindow::findChild<QLCDNumber *>("mag_sense_y");
-//    QLCDNumber *mag_sense_z = MainWindow::findChild<QLCDNumber *>("mag_sense_z");
-
-
     // Polaris Tracking
     QLCDNumber *tracker_wand_x = MainWindow::findChild<QLCDNumber *>("tracker_wand_x");
     QLCDNumber *tracker_wand_y = MainWindow::findChild<QLCDNumber *>("tracker_wand_y");
     QLCDNumber *tracker_wand_z = MainWindow::findChild<QLCDNumber *>("tracker_wand_z");
-
-    QLCDNumber *tracker_base_x = MainWindow::findChild<QLCDNumber *>("tracker_base_x");
-    QLCDNumber *tracker_base_y = MainWindow::findChild<QLCDNumber *>("tracker_base_y");
-    QLCDNumber *tracker_base_z = MainWindow::findChild<QLCDNumber *>("tracker_base_z");
 
     getTrackerPosition(polaris);
 
@@ -320,13 +344,8 @@ bool MainWindow::updateCurrPos(){
     tracker_wand_y->display(QString::number(tracker_wand_y_val));
     tracker_wand_z->display(QString::number(tracker_wand_z_val));
 
-    tracker_base_x->display(QString::number(tracker_base_x_val));
-    tracker_base_y->display(QString::number(tracker_base_y_val));
-    tracker_base_z->display(QString::number(tracker_base_z_val));
-
     return true;
 }
-
 
 void MainWindow::on_updateBase_clicked()
 {
@@ -352,19 +371,40 @@ void MainWindow::on_start_sensor_clicked(bool checked)
     }
 }
 
-
 void MainWindow::getTrackerPosition(PolarisSpectra *polaris){
     polaris->nGetTXTransforms(0);
-    tracker_wand_pose = getPoseData(1);
+    tracker_wand_pose = getPoseData(1); // This returns the wand position in the tracker (polaris) frame
 
-    tracker_wand_x_val = tracker_wand_pose->pos(0);
-    tracker_wand_y_val = tracker_wand_pose->pos(1);
-    tracker_wand_z_val = tracker_wand_pose->pos(2);
+    // Position of the wand in the base frame
+    Vector3d mag_wand_pos = tracker_base_pose->inv_rot_mat * (tracker_wand_pose->pos-tracker_base_pose->pos);
+
+    tracker_wand_x_val = mag_wand_pos[0];
+    tracker_wand_y_val = mag_wand_pos[1];
+    tracker_wand_z_val = mag_wand_pos[2];
 }
+
 
 void MainWindow::updateStaticMarkers(){
     polaris->nGetTXTransforms(0);
     tracker_base_pose = getPoseData(2);
+
+
+    // Position of the base magnet in the base frame
+    Vector3d mag_base_pos = tracker_base_pose->inv_rot_mat * (tracker_base_pose->pos-tracker_base_pose->pos);
+
+    tracker_base_x_val = mag_base_pos[0];
+    tracker_base_y_val = mag_base_pos[1];
+    tracker_base_z_val = mag_base_pos[2];
+
+
+    QLCDNumber *tracker_base_x = MainWindow::findChild<QLCDNumber *>("tracker_base_x");
+    QLCDNumber *tracker_base_y = MainWindow::findChild<QLCDNumber *>("tracker_base_y");
+    QLCDNumber *tracker_base_z = MainWindow::findChild<QLCDNumber *>("tracker_base_z");
+
+    tracker_base_x->display(QString::number(tracker_base_x_val));
+    tracker_base_y->display(QString::number(tracker_base_y_val));
+    tracker_base_z->display(QString::number(tracker_base_z_val));
+
 }
 
 polarisTransformMatrix* MainWindow::getPoseData(int polaris_num){
@@ -491,7 +531,6 @@ void MainWindow::GUI_Update()
     //only display every 10 times around if its too fast its impossible to read the numbers in time
     displayCounter++;
 
-
     if(displayCounter > 10){
 
         ui->InnerTempLCD->display(tempTempInner1);
@@ -510,10 +549,6 @@ void MainWindow::GUI_Update()
     }
 }
 
-
-
-
-
 void MainWindow::on_load_calib_file_clicked()
 {
       // QFile Dialog
@@ -529,6 +564,82 @@ void MainWindow::on_load_calib_file_clicked()
       {
         ui->list_textEdit->append(i);
       }
+}
+
+void MainWindow::on_save_calib_clicked()
+{
+    if(calib_complete){
+
+        QLineEdit *full_calib_filename = MainWindow::findChild<QLineEdit *>("saveCalibration");
+        QString filename = full_calib_filename->text();
+        QString path{"output_calib_files/"};
+
+        calibration.writeCalibration((path+filename).toStdString());
+
+        qDebug() << "Full Calibration File written to: " << (path+filename);
+        calib_complete = false; // Reset calibration
+
+    }else{
+        QMessageBox msgBox;
+        msgBox.setText("No Calibration Has been completed.");
+        msgBox.exec();
+    }
+
+}
+
+void MainWindow::loadMagFileData(QString filename){
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+       return;
+
+    MagneticMeasurement cur_measurement;
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+
+        QString full_line = in.readLine();
+        QStringList line = full_line.split(',');
+
+        qDebug() << "data: " << line[0] << "," << line[1]<< "," << line[2]<< "," <<  line[3]<< "," << line[4]<< "," << line[5]<< "," << line[6]<< "," << line[7]<< "," << line[8];
+
+        Vector3d curField = Vector3d(line[0].toDouble(),line[1].toDouble(),line[2].toDouble());
+        Vector3d curPos = Vector3d(line[3].toDouble(),line[4].toDouble(),line[5].toDouble());
+        Vector3d curCurrent = Vector3d(line[6].toDouble(),line[7].toDouble(),line[8].toDouble());
+
+        // check to see if point is in workspace, and add it if it is
+        if (calibration.pointInWorkspace(curPos)){
+            cur_measurement =  MagneticMeasurement(curField, curPos, curCurrent);
+            dataList.push_back(cur_measurement);
+        }else{
+            qDebug() << "Point not in workspace not added. Vector: [" << curCurrent[0] << ","<< curCurrent[1] << "," << curCurrent[2];
+        }
+    }
+}
+
+void MainWindow::on_run_calib_clicked()
+{
+    // Load all files listed in the textEdit box
+    QString contents = ui->list_textEdit->toPlainText();
+    QStringList file_array = contents.split('\n');
+    for (int i=0; i<file_array.size();i++){
+        // Create MagneticMeasurment Inputs for each of the files and load all data into dataList
+        qDebug() << "----------File Name added: "<< file_array[i] << "-----------";
+        loadMagFileData(file_array[i]);
 
 
+        // Run the calibration and watch for the output
+
+        qDebug() << "dataList size: " << dataList.size();
+    }
+
+    // Perform calibration
+    calibration.calibrate("Calibration", dataList,true ,true , ElectromagnetCalibration::calibration_constraints::HEADING_THEN_POSITION, -1 ,-1,1e-8);
+
+    calib_complete=true;
+
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    ui->list_textEdit->clear();
 }

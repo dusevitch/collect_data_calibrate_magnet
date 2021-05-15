@@ -48,6 +48,8 @@ public:
 
     void getCoilVals();
 
+    void loadMagFileData(QString filename);
+
     // ----------------VARIABLES----------------
     polarisTransformMatrix *tracker_base_pose;
     polarisTransformMatrix *tracker_wand_pose;
@@ -102,6 +104,7 @@ public:
     std::vector <Vector3d> tracker_pos;
     std::vector <Vector3d> cur_current_vec;
 
+    bool calib_complete{false}; // See if there exists a complete calibration
 
 private slots:
     void on_activate_mag_toggled(bool checked);
@@ -127,6 +130,12 @@ private slots:
     void on_save_coil_vals_clicked();
 
     void on_load_calib_file_clicked();
+
+    void on_save_calib_clicked();
+
+    void on_run_calib_clicked();
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::MainWindow *ui;
