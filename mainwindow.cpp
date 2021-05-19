@@ -119,7 +119,7 @@ void MainWindow::on_activate_mag_toggled(bool checked)
 void MainWindow::readMagData(){
     QVector<double> temp(3);
 
-        sensorController->magSensor->MagSenseReadSensor(temp);
+            sensorController->magSensor->MagSenseReadSensor(temp);
 
             //Change LCD display in the Magnetic Calibration tab (using the sensor)
             ui->mag_sense_x->display(temp[0]);

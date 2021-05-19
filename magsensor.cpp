@@ -104,17 +104,12 @@ bool MagSensor::threadedFunction(double elapsed_time) { // print out the elapsed
             //    cout << "Write lock error in Mag sensor __FUNCTION__: " << error << endl;
             //}else{
 
-//            // This setup is for the standard orientation of the sensor on the table
-//            xyzReadings->clear();
-//            xyzReadings->append(-xyzTemp[2].toDouble());
-//            xyzReadings->append(-xyzTemp[1].toDouble());
-//            xyzReadings->append(xyzTemp[0].toDouble());
 
-            // This setup is for my Guinea pig setup phantom (long white 3d-printed beam)
+            // No transformation
             xyzReadings->clear();
-            xyzReadings->append(-xyzTemp[0].toDouble());
+            xyzReadings->append(xyzTemp[0].toDouble());
+            xyzReadings->append(xyzTemp[1].toDouble());
             xyzReadings->append(xyzTemp[2].toDouble());
-            xyzReadings->append(-xyzTemp[1].toDouble());
 
             //This statement added for calibration of omnimag via magnetic sensor
 
