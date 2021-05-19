@@ -151,7 +151,7 @@ public:
         collect_data = new QPushButton(centralWidget);
         collect_data->setObjectName(QStringLiteral("collect_data"));
         collect_data->setGeometry(QRect(170, 470, 141, 41));
-        collect_data->setCheckable(true);
+        collect_data->setCheckable(false);
         tracker_base_y = new QLCDNumber(centralWidget);
         tracker_base_y->setObjectName(QStringLiteral("tracker_base_y"));
         tracker_base_y->setGeometry(QRect(760, 172, 91, 41));

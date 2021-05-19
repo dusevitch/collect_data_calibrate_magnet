@@ -17,7 +17,8 @@
 #include "magsensor.h"
 #include "sensorcontrol.h"
 #include <mutex>
-
+#include <QKeySequence>
+#include <QShortcut>
 
 namespace Ui {
 class MainWindow;
@@ -106,14 +107,21 @@ public:
 
     bool calib_complete{false}; // See if there exists a complete calibration
 
+    QShortcut *collect_data_key;
+
+
 private slots:
+    void keyTest();
+
+    void on_collect_data_clicked();
+
     void on_activate_mag_toggled(bool checked);
 
     void on_start_sensor_toggled(bool checked);
 
     void on_start_polaris_toggled(bool checked);
 
-    void on_collect_data_toggled(bool checked);
+    //void on_collect_data_toggled(bool checked);
 
     void on_updateBase_clicked();
 
@@ -136,6 +144,7 @@ private slots:
     void on_run_calib_clicked();
 
     void on_pushButton_2_clicked();
+
 
 private:
     Ui::MainWindow *ui;

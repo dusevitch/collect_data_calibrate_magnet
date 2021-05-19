@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QString>
 #include <QTextCodec>
+#include <QKeyEvent>
 
 
 polarisTransformMatrix* buildStructfromTransMatrix(Eigen::Matrix4d &trans_mat);
@@ -52,6 +53,16 @@ MainWindow::MainWindow(QWidget *parent) :
     sensor_to_RHS << 1, 2, 3,
                      4, 5, 6,
                      7, 8, 9;
+
+
+//    // Add Buttons to start the collection sequence
+    collect_data_key = new QShortcut(this);
+    collect_data_key->setKey(Qt::Key_Backspace);
+    connect(collect_data_key,SIGNAL(activated()),this,SLOT(on_collect_data_clicked()));
+
+    //ui->collect_data->setShortcut(QKeySequence('c'));
+//    ui->updateBase->setShortcut(QKeySequence('c'));
+
 
     // connect the GUI_Update slot to get Magnet Temperatures
     counter = new QTimer;
@@ -151,30 +162,51 @@ void MainWindow::on_start_polaris_toggled(bool checked)
 }
 
 
-void MainWindow::on_collect_data_toggled(bool checked)
+void MainWindow::on_collect_data_clicked()
 {
-    if (checked){
-        QLineEdit *time_to_collect = MainWindow::findChild<QLineEdit *>("collect_time_s");
-        QString collect_time_string =time_to_collect->text();
-        int collect_time=collect_time_string.toInt()*1000;
+    QLineEdit *time_to_collect = MainWindow::findChild<QLineEdit *>("collect_time_s");
+    QString collect_time_string =time_to_collect->text();
+    int collect_time=collect_time_string.toInt()*1000;
 
-        timer = new QTimer();
+    timer = new QTimer();
 
-        qDebug()<< collect_time<<endl;
-        time = collect_time;
+    qDebug()<< collect_time<<endl;
+    time = collect_time;
 
-        // Start the timer for collected seconds and collect data from the wand position at that location (at 30 Hz)
+    // Start the timer for collected seconds and collect data from the wand position at that location (at 30 Hz)
 
-        connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData()));
-        timer->start(sampling_rate_ms);
+    connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData()));
+    timer->start(sampling_rate_ms);
 
-
-    }else{
-        timer->stop();
-
-    }
 
 }
+
+
+//void MainWindow::on_collect_data_toggled(bool checked)
+//{
+//    if (checked){
+//        QLineEdit *time_to_collect = MainWindow::findChild<QLineEdit *>("collect_time_s");
+//        QString collect_time_string =time_to_collect->text();
+//        int collect_time=collect_time_string.toInt()*1000;
+
+//        timer = new QTimer();
+
+//        qDebug()<< collect_time<<endl;
+//        time = collect_time;
+
+//        // Start the timer for collected seconds and collect data from the wand position at that location (at 30 Hz)
+
+//        connect(timer, SIGNAL(timeout()), this, SLOT(getCalibData()));
+//        timer->start(sampling_rate_ms);
+
+
+//    }else{
+//        timer->stop();
+
+//    }
+
+//}
+
 
 void MainWindow::getCalibData(){
 
@@ -203,6 +235,10 @@ void MainWindow::getCalibData(){
 
         // b) m_R_p * p_R_w * w_R_s * s_F = m=magnet frame, p=polaris frame, w=wand frame, s=sensor frame,F=field vector
         Vector3d cur_Field =  tracker_base_pose->inv_rot_mat * tracker_wand_pose->rot_mat * w_R_s * cur_Field_init;
+
+        Vector3d test_vec = tracker_base_pose->inv_rot_mat * tracker_wand_pose->rot_mat * w_R_s * Vector3d(0,1,0);
+        printVector3d(test_vec, "test_vec");
+
 
     // 3 - Get Current Applied in Amps
     getCoilVals();
@@ -255,25 +291,8 @@ void MainWindow::on_save_coil_vals_clicked()
 }
 
 
-void CalibrateData(){
-    //for all the files here
-
-    //load the data
-
-    // put each of the data in magnetic measurements
-
-    // run full calibration
-
-    // save the calibration
-
-//// Save the data in a data structure, and eliminate any data outside the workspace bounds
-//    MagneticMeasurement cur_measurement;
-//    if (calibration.pointInWorkspace(tracker_wand_pose->pos)){
-//        cur_measurement =  MagneticMeasurement (cur_Field, tracker_wand_pose->pos, current_vec);
-//    }
-
-//  // Put this data into the format for the electromagnet calibration
-//    dataList.push_back(cur_measurement);
+void MainWindow::keyTest(){
+    qDebug() << "Key pressed!";
 }
 
 
@@ -643,3 +662,4 @@ void MainWindow::on_pushButton_2_clicked()
 {
     ui->list_textEdit->clear();
 }
+
