@@ -237,7 +237,7 @@ void MainWindow::getCalibData(){
         Vector3d cur_Field =  tracker_base_pose->inv_rot_mat * tracker_wand_pose->rot_mat * w_R_s * cur_Field_init;
 
         Vector3d test_vec = tracker_base_pose->inv_rot_mat * tracker_wand_pose->rot_mat * w_R_s * Vector3d(0,1,0);
-        printVector3d(test_vec, "test_vec");
+        //printVector3d(test_vec, "test_vec");
 
 
     // 3 - Get Current Applied in Amps
@@ -394,12 +394,18 @@ void MainWindow::getTrackerPosition(PolarisSpectra *polaris){
     polaris->nGetTXTransforms(0);
     tracker_wand_pose = getPoseData(1); // This returns the wand position in the tracker (polaris) frame
 
-    // Position of the wand in the base frame
-    Vector3d mag_wand_pos = tracker_base_pose->inv_rot_mat * (tracker_wand_pose->pos-tracker_base_pose->pos);
+//    if (tracker_wand_pose->pos.x()!=-1000.0 && tracker_wand_pose->pos.y()!=-1000.0 && tracker_wand_pose->pos.z()!=-1000.0){
+        // Position of the wand in the base frame
+        Vector3d mag_wand_pos = tracker_base_pose->inv_rot_mat * (tracker_wand_pose->pos-tracker_base_pose->pos);
 
-    tracker_wand_x_val = mag_wand_pos[0];
-    tracker_wand_y_val = mag_wand_pos[1];
-    tracker_wand_z_val = mag_wand_pos[2];
+        tracker_wand_x_val = mag_wand_pos[0];
+        tracker_wand_y_val = mag_wand_pos[1];
+        tracker_wand_z_val = mag_wand_pos[2];
+//    }else{
+//        tracker_wand_x_val = -1000;
+//        tracker_wand_y_val = -1000;
+//        tracker_wand_z_val = -1000;
+//    }
 }
 
 
